@@ -4,6 +4,7 @@ import React from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { counterAddress, counterAbi } from '@/config';
 import { ConnectKitButton } from 'connectkit';
+import { ThemeToggle } from '@/component/ThemeToggle';
 import Image from 'next/image';
 export default function DAppTemplate() {
   const { address, isConnected } = useAccount();
@@ -40,9 +41,9 @@ export default function DAppTemplate() {
   };
   
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
+      <header className="flex justify-between items-center px-6 py-4 border-b border-border">
         {/* Logo */}
         <div className="flex items-center">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
@@ -50,16 +51,21 @@ export default function DAppTemplate() {
           </div>
         </div>
         
-        {/* Connect Wallet Button */}
-        <ConnectKitButton />
+        {/* 右侧按钮组 */}
+        <div className="flex items-center space-x-3">
+          {/* 主题切换按钮 */}
+          <ThemeToggle />
+          {/* Connect Wallet Button */}
+          <ConnectKitButton />
+        </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-16 relative">
         {/* Side Icons */}
         <div className="absolute right-6 top-1/2 transform -translate-y-1/2 flex flex-col space-y-4">
-          <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+            <svg className="w-4 h-4 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
             </svg>
           </div>
@@ -70,29 +76,29 @@ export default function DAppTemplate() {
 
         {/* Welcome Content */}
         <div className="text-center max-w-2xl">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             Welcome to Solidity DApp Template
           </h1>
           
           {!isConnected ? (
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-muted-foreground mb-8">
               Please connect your wallet to view your assets
             </p>
           ) : (
             <div className="space-y-6">
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-xl text-muted-foreground mb-8">
                 Wallet Connected: {address?.slice(0, 6)}...{address?.slice(-4)}
               </p>
               
               {/* Counter Section */}
-              <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              <div className="bg-card rounded-2xl p-8 border border-border">
+                <h2 className="text-2xl font-semibold text-card-foreground mb-4">
                   Counter Contract
                 </h2>
                 
                 <div className="mb-6">
-                  <p className="text-lg text-gray-600 mb-2">Current Value:</p>
-                  <p className="text-3xl font-bold text-blue-600">
+                  <p className="text-lg text-muted-foreground mb-2">Current Value:</p>
+                  <p className="text-3xl font-bold text-primary">
                     {count?.toString() || 'Loading...'}
                   </p>
                 </div>
@@ -101,22 +107,22 @@ export default function DAppTemplate() {
                   onClick={handleIncrement}
                   type="button"
                   disabled={isConfirming}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
+                  className="bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-primary-foreground font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
                 >
                   {isConfirming ? 'Incrementing...' : 'Increment Counter'}
                 </button>
 
                 {hash && (
-                  <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-sm text-green-800">
+                  <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <p className="text-sm text-green-800 dark:text-green-200">
                       Transaction Hash: {hash}
                     </p>
                   </div>
                 )}
                 
                 {isConfirmed && (
-                  <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-sm text-green-800 font-semibold">
+                  <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <p className="text-sm text-green-800 dark:text-green-200 font-semibold">
                       ✅ Transaction Confirmed!
                     </p>
                   </div>
