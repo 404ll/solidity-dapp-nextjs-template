@@ -1,195 +1,143 @@
-# Solidity + Next.js DApp 模板
 
-这是一个现代化的 Solidity 智能合约 + Next.js 前端 DApp 开发模板，集成了 wagmi、ConnectKit 和 Tailwind CSS。
+# 🧩 Solidity + Next.js 模板（Monorepo）
 
-## 🚀 功能特性
+一个包含智能合约与前端的 DApp 模板：
+- 合约端：Hardhat + Solidity（示例合约 `Counter`）
+- 前端：Next.js 15 + TypeScript + wagmi + ConnectKit + Tailwind
 
-- ✅ **Next.js 15** - 最新的 React 框架
-- ✅ **TypeScript** - 类型安全的开发体验
-- ✅ **Wagmi v2** - 强大的 React Hooks 用于以太坊交互
-- ✅ **ConnectKit** - 美观的钱包连接组件
-- ✅ **Tailwind CSS** - 现代化的样式框架
-- ✅ **React Query** - 数据获取和缓存
-- ✅ **Viem** - 轻量级的以太坊库
-
-## 📋 前置要求
-
-- Node.js 18+ 
-- npm/yarn/pnpm
-- 一个以太坊钱包（MetaMask 等）
-- 智能合约已部署到测试网
-
-## 🛠️ 安装和运行
-
-### 1. 克隆项目
-```bash
-git clone https://github.com/404ll/solidity-dapp-nextjs-template
-cd solidity-next-js-template
-```
-
-### 2. 安装依赖
-```bash
-npm install
-# 或
-yarn install
-# 或
-pnpm install
-```
-
-### 3. 环境配置
-创建 `.env.local` 文件并配置以下变量：
-
-```env
-# WalletConnect 项目 ID (从 https://cloud.walletconnect.com 获取)
-NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id
-
-# 智能合约地址 (部署后获得)
-NEXT_PUBLIC_CONTRACT_ADDRESS=0x...
-```
-
-### 4. 启动开发服务器
-```bash
-npm run dev
-# 或
-yarn dev
-# 或
-pnpm dev
-```
-
-访问 [http://localhost:3000](http://localhost:3000) 查看应用。
+---
 
 ## 📁 项目结构
 
 ```
 solidity-next-js-template/
-├── abi/                    # 智能合约 ABI 文件
-│   └── counter.json
-├── app/                    # Next.js App Router
-│   ├── globals.css        # 全局样式
-│   ├── layout.tsx         # 根布局
-│   ├── page.tsx           # 主页面
-│   └── provider.tsx       # Web3 提供者
-├── config/                 # 配置文件
-│   └── index.ts           # Wagmi 和合约配置
-├── public/                 # 静态资源
-└── package.json
+├── contracts/                         # Hardhat 合约项目（ESM）
+│   ├── contracts/Counter.sol          # 示例计数器合约
+│   ├── scripts/deploy.js              # 部署脚本（ESM）
+│   ├── artifacts/contracts/.../Counter.json  # 编译产物（ABI/bytecode）
+│   └── hardhat.config.js              # 网络配置（支持 dotenv）
+└── frontend/                          # Next.js 前端
+    ├── abi/counter.json               # 前端使用的 ABI（需从 contracts 同步）
+    ├── config/index.ts                # 合约地址/ABI/RPC 配置
+    ├── app/ ...                       # UI 代码
+    └── package.json
 ```
 
-## 🔧 配置说明
+---
 
-### 1. 网络配置 (`config/index.ts`)
+## 🚀 环境要求
 
-```typescript
-import { sepolia } from 'wagmi/chains';
+- Node.js ≥ 18
+- pnpm 或 npm
+- 浏览器钱包（MetaMask 等）
 
-export const config = createConfig(getDefaultConfig({
-    appName: 'Solidity Next.js Template',
-    walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-    chains: [sepolia], // 可以添加更多网络
-    transports: {
-        [sepolia.id]: http(),
-    },
-}));
-```
+---
 
-### 2. 合约配置
+## ⚙️ 安装依赖
 
-```typescript
-// 合约地址
-export const counterAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+分别在两个子目录安装依赖：
 
-// 合约 ABI
-export const counterAbi = counterArtifact.abi;
-```
-
-## 💡 使用示例
-
-### 连接钱包
-```tsx
-import { ConnectKitButton } from 'connectkit';
-
-function App() {
-  return <ConnectKitButton />;
-}
-```
-
-### 读取合约数据
-```tsx
-import { useReadContract } from 'wagmi';
-
-function Counter() {
-  const { data: count } = useReadContract({
-    address: counterAddress,
-    abi: counterAbi,
-    functionName: 'x', // 读取 x 变量
-  });
-
-  return <div>Count: {count?.toString()}</div>;
-}
-```
-
-### 写入合约
-```tsx
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-
-function IncrementButton() {
-  const { writeContract, data: hash } = useWriteContract();
-  const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash });
-
-  const handleIncrement = () => {
-    writeContract({
-      address: counterAddress,
-      abi: counterAbi,
-      functionName: 'inc', // 调用 inc 函数
-    });
-  };
-
-  return (
-    <button onClick={handleIncrement} disabled={isLoading}>
-      {isLoading ? 'Processing...' : 'Increment'}
-    </button>
-  );
-}
-```
-
-## 🎨 自定义样式
-
-项目使用 Tailwind CSS，你可以：
-
-1. 修改 `app/globals.css` 添加自定义样式
-2. 在组件中使用 Tailwind 类名
-3. 配置 `tailwind.config.ts` 添加自定义主题
-
-## 📦 构建和部署
-
-### 构建生产版本
 ```bash
-npm run build
+cd contracts && pnpm install   # 或 npm install
+cd ../frontend && pnpm install # 或 npm install
 ```
 
-### 启动生产服务器
+---
+
+## 🔨 合约开发与部署
+
 ```bash
-npm run start
+cd contracts
+
+# 编译
+pnpm compile      # 等价 npx hardhat compile
+
+# 运行测试（已适配 ESM）
+pnpm test         # 等价 npx hardhat test
+
+# 启动本地节点
+pnpm node         # 等价 npx hardhat node
 ```
 
-### 部署到 Vercel
-1. 将代码推送到 GitHub
-2. 在 [Vercel](https://vercel.com) 导入项目
-3. 配置环境变量
-4. 部署
+部署（脚本方式）：
 
-## 🔗 相关资源
+- 本地网络（推荐本地调试）：
+  ```bash
+  # 先在一个终端启动本地节点
+  pnpm node
+  # 再在另一个终端部署
+  pnpm deploy:localhost
+  ```
 
-- [Wagmi 文档](https://wagmi.sh/)
-- [ConnectKit 文档](https://docs.family.co/connectkit)
-- [Next.js 文档](https://nextjs.org/docs)
-- [Tailwind CSS 文档](https://tailwindcss.com/docs)
-- [Viem 文档](https://viem.sh/)
+- 测试网（Sepolia）：在 `contracts/.env` 配置：
+  ```env
+  SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/<your_key>
+  SEPOLIA_PRIVATE_KEY=0x<your_private_key>
+  ```
+  然后执行：
+  ```bash
+  pnpm deploy:sepolia
+  ```
 
-## 🤝 贡献
+部署成功后，记录控制台输出的合约地址（形如 `0x...`）。
 
-欢迎提交 Issue 和 Pull Request！
+同步 ABI 到前端（每次合约变更/重新编译后都建议同步）：
 
-## 📄 许可证
+```bash
+cp ./artifacts/contracts/Counter.sol/Counter.json ../frontend/abi/counter.json
+```
 
-MIT License
+---
+
+## 💻 前端开发
+
+在 `frontend/.env.local` 中设置：
+
+```env
+NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8545                 # 本地节点 或 你的 Infura/Alchemy RPC
+NEXT_PUBLIC_COUNTER_ADDRESS=0x你的Counter合约地址
+```
+
+启动前端：
+
+```bash
+cd frontend
+pnpm dev   # 或 npm run dev
+```
+
+访问 `http://localhost:3000` 与合约交互（读取 `x`、调用 `inc`/`incBy`）。
+
+> 注意：前端不再发起部署交易；请使用上面的 Hardhat 部署脚本，部署后把地址写入环境变量。
+
+---
+
+## 🧰 常用命令速查
+
+| 操作 | 命令 |
+| --- | --- |
+| 编译合约 | `cd contracts && pnpm compile` |
+| 运行测试 | `cd contracts && pnpm test` |
+| 本地节点 | `cd contracts && pnpm node` |
+| 本地部署 | `cd contracts && pnpm deploy:localhost` |
+| Sepolia 部署 | `cd contracts && pnpm deploy:sepolia` |
+| 同步 ABI 到前端 | `cp contracts/artifacts/contracts/Counter.sol/Counter.json frontend/abi/counter.json` |
+| 启动前端 | `cd frontend && pnpm dev` |
+
+---
+
+## 📝 说明与排错
+
+- ESM 注意：`contracts/package.json` 中启用了 `"type": "module"`。在测试和脚本中使用默认导入 Hardhat：
+
+  ```js
+  import hardhat from "hardhat";
+  const { ethers } = hardhat;
+  ```
+
+- RPC 断路器/代理问题：若前端或部署出现公共 RPC 熔断或 `ERR_PROXY_CONNECTION_FAILED`，请：
+  - 在前端改用你自己的稳定 RPC：`NEXT_PUBLIC_RPC_URL=...`
+  - 在合约侧设置有效的 `SEPOLIA_RPC_URL`（Infura/Alchemy），避免被限流/禁用端点
+  - 本地调试优先使用 `http://127.0.0.1:8545`
+
+- 若前端报合约 ABI 不匹配，请重新从 `contracts/artifacts/.../Counter.json` 复制到 `frontend/abi/counter.json`。
+
